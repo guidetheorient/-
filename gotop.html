@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>gotop</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    .ct{
+      height: 1000px;
+      background: linear-gradient(#fe8855 0,#f95462 35%,#ed7aa3 100%)
+    }
+
+
+
+    .go-top{
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      height: 40px;
+      width: 40px;
+      background: rgba(100, 100, 100, 0.4);
+      border-radius: 4px;
+      text-align: center;
+      line-height: 40px;
+      cursor: pointer;
+      transition: background-color .8s;
+    }
+    .go-top:hover{
+      background-color: #363636;
+    }
+    .icon-top{
+      fill:#fff;
+      width: 0.8em; height: 0.8em;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="ct"></div>
+  <script src="src/iconfont.js"></script>
+  <script src="src/jquery-3.2.0.js"></script>
+  <script>
+
+    function GoTop(){
+      this.ct = $('html,body')
+      this.createNode()
+      this.target = $('.go-top')
+      this.bindEvent()
+    }
+
+    GoTop.prototype = {
+      createNode: function(){
+        var goTopHtml = '<div class="go-top"><svg class="icon icon-top" aria-hidden="true"><use xlink:href="#icon-top"></use></svg></div>'
+        this.ct.append(goTopHtml)
+      },    
+      bindEvent: function(){
+        var ct = this.ct
+        //注意this
+        this.target.click(function(){
+          ct.animate({scrollTop: 0});
+        })
+      }
+    }
+
+    new GoTop()
+    
+  </script>
+</body>
+</html>

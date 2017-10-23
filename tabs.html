@@ -1,0 +1,163 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>tabs</title>
+  <style>
+    /*reset*/
+    ul,li{
+      margin:0;
+      padding:0;
+      list-style:none;
+      box-sizing:border-box;
+    }
+
+    /*common*/
+    ul,li{
+      font-family:'Microsoft YaHei',sans-serif;
+      font-weight: 300;
+    }
+    .clearfix:after{
+      content:'';
+      display:block;
+      clear:both;
+    }
+
+    /*specified*/
+    .ct{
+      width: 450px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .header{
+      border-bottom: 1px solid #ddd;
+    }
+    .header li{
+      float:left;
+      margin-right: 4px; 
+      margin-bottom: -1px;
+      text-align:center;
+      border:1px solid transparent;
+      border-bottom: 0;
+      background: #fff;
+      cursor:pointer;
+    }
+    .header li span{
+      display: inline-block;
+      padding:10px 15px;
+    }
+    .header li:hover{
+      background:#ddd;
+      border-bottom: 1px solid #ddd;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+    .header li.active{
+      border: 1px solid #ddd;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+    .header li.active:hover{
+      background: #fff;
+    }
+    .wrap{
+      width: 100%;
+      border:1px solid #ccc;
+      border-top: 0;
+      border-radius: 4px;
+      border-top-left-radius: 0;
+      overflow: hidden;
+      background-color: #fff;
+    }
+    .wrap>.content{
+      position: relative;
+      width: 1350px;
+    }
+    .wrap>.content>li{
+      float: left;
+      padding: 10px;
+      width: 450px;
+      height: 150px;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="ct">
+    <ul class="header clearfix">
+      <li class="active"><span>tab1</span></li>
+      <li><span>tab2</span></li>
+      <li><span>tab3</span></li>
+    </ul>
+    <div class="wrap">
+      <ul class="content clearfix">
+        <li>内容1</li>
+        <li>内容2</li>
+        <li>内容3</li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    function Tab(container){
+      this.ct = container
+      this.init()
+      this.bind()
+    }
+
+    Tab.prototype.init = function () {
+      this.header = this.ct.querySelectorAll('.header>li')
+      this.content = this.ct.querySelectorAll('.content>li')
+    }
+
+    Tab.prototype.bind = function () {
+      var _this = this
+      
+      //状态锁
+      var done = true
+      for(let i=0; i<this.header.length;i++){
+        this.header[i].addEventListener('click',function (e) {
+          if(!done){
+            return
+          }
+          done = false
+          var target = e.currentTarget
+          //获取点击tab的序号
+          var index = [].indexOf.call(_this.header,target)
+
+          //选中的header li加上class
+          //猎豹里面竟然没有NodeList.prototype.forEach方法
+          for(let i=0; i<_this.header.length;i++){
+            _this.header[i].classList.remove('active')
+          }
+          target.classList.add('active')
+
+          var contentCt = _this.content[0].parentElement
+
+          //无动画
+          //contentCt.style.left = -450*index+'px'
+          
+          var left = parseInt(contentCt.style.left) || 0
+          // var width = window.getComputedStyle(contentCt,null).width
+          // console.log(width)
+          var interval = Math.abs(-450*index-left)
+          setTimeout(function(){
+            if(left > -450*index){
+              left -= interval/10
+            } else if(left < -450*index) {
+              left += interval/10
+            }
+            contentCt.style.left = left + 'px'
+            if (left != -450*index){
+              setTimeout(arguments.callee,30)
+            }
+            done = true
+          },30)
+        })
+      }
+    }
+
+    new Tab(document.querySelectorAll('.ct')[0])
+
+  </script>
+</body>
+</html>
